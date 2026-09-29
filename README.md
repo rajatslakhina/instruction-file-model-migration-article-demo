@@ -2,7 +2,7 @@
 
 A small Swift library that lints and migrates agent instruction files (CLAUDE.md and friends) between model generations, built for the article **"Your CLAUDE.md Is Full of Lines Opus 5.5 Doesn't Need. Version It Like Code."**
 
-Article: (added after publish)
+Article: https://medium.com/@er.rajatlakhina/your-claude-md-is-full-of-lines-opus-5-5-doesnt-need-version-it-like-code-6435518186b9
 
 Rules come from Addy Osmani's [Getting the most out of Opus 5.5 in Claude and Claude Code](https://claude.dev/blog/getting-the-most-out-of-opus-5-5/) (claude.dev, 22 Sep 2026).
 
@@ -33,6 +33,6 @@ The demo app edits a sample Opus-5-era CLAUDE.md, lists findings by lane, migrat
 
 ## Verification status
 
-- `swift build` and `swift test` (10 tests, 0 failures) ran on Swift 6.1.3, Linux x86_64.
+- `swift build` and `swift test` (12 tests, 0 failures) ran on Swift 6.1.3, Linux x86_64.
 - `Demo.xcodeproj` uses a local package reference (`relativePath = "."`); its `project.pbxproj` was checked for brace/paren balance and dangling ids.
 - **The demo app was NOT launched on an iOS Simulator and there is no screenshot.** This run had no Mac shell and no granted access to drive Xcode, so the SwiftUI target was reviewed by hand only and has not been compiled.
