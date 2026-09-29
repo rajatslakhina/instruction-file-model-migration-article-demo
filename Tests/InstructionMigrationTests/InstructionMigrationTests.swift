@@ -37,7 +37,6 @@ final class InstructionMigrationTests: XCTestCase {
         let r = migrator.migrate(SampleInstructionFile.iosTeam)
         XCTAssertFalse(r.migrated.contains("Think step by step"))
         XCTAssertFalse(r.migrated.contains("Think carefully before you answer"))
-        XCTAssertFalse(r.migrated.contains("Then write"))
         XCTAssertTrue(r.migrated.contains("Think carefully before deleting any file or force-pushing a branch."))
         XCTAssertTrue(r.migrated.hasPrefix("<!-- instruction-profile: opus-5.5 -->"))
         XCTAssertEqual(Set(r.added), ["stop-policy", "task-file"])
@@ -73,5 +72,17 @@ final class InstructionMigrationTests: XCTestCase {
     func testRegressionCheckCatchesALostProtectedLine() {
         let bad = MigrationResult(original: "Never force-push.\n", migrated: "\n", applied: [], needsHuman: [], added: [])
         XCTAssertFalse(RegressionCheck.run(bad).first { $0.name == "protected lines preserved" }!.passed)
+    }
+
+    func testVersionNumbersAndPathsSurviveSentenceRemoval() {
+        let r = migrator.migrate("Think carefully. Target Swift 5.9 and iOS 17.2 only. See docs/style.md for e.g. naming.")
+        XCTAssertTrue(r.migrated.contains("Target Swift 5.9 and iOS 17.2 only. See docs/style.md for e.g. naming."))
+    }
+
+    func testEveryKeptSentenceIsVerbatimFromTheOriginalLine() {
+        let line = "Think step by step. Use `swift test` first! Then ship v2.1.0."
+        let re = try! NSRegularExpression(pattern: #"\bthink\s+step[\s-]by[\s-]step\b"#, options: [.caseInsensitive])
+        let kept = InstructionMigrator.dropMatchingSentences(line, re)
+        XCTAssertEqual(kept, "Use `swift test` first! Then ship v2.1.0.")
     }
 }
