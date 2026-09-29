@@ -2,7 +2,8 @@ import Foundation
 
 /// Rules for moving an instruction file from Opus 5 habits to Opus 5.5.
 /// Source: Addy Osmani, "Getting the most out of Opus 5.5 in Claude and Claude Code",
-/// claude.dev, 22 Sep 2026. Each rationale paraphrases one section of that playbook.
+/// claude.dev, 22 Sep 2026. Rationales paraphrase the playbook; the `.add` block text is quoted from
+/// the playbook's own suggested CLAUDE.md rules.
 public enum OpusRules {
     public static let thinkLines = Rule(
         id: "think-hard",

@@ -65,14 +65,32 @@ public struct InstructionMigrator: Sendable {
 
     // MARK: helpers
 
+    /// Splits on a terminator followed by whitespace or end of line, so "5.9" and "style.md" stay whole,
+    /// and keeps each surviving sentence's original text, terminator included.
     static func dropMatchingSentences(_ line: String, _ re: NSRegularExpression) -> String {
         let bullet = line.prefix { $0 == " " || $0 == "-" || $0 == "*" }
         let body = String(line.dropFirst(bullet.count))
-        let sentences = body.split(whereSeparator: { ".!?".contains($0) })
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-        let survivors = sentences.filter { !InstructionLinter.matches(re, $0) && !$0.isEmpty }
+        let survivors = splitSentences(body).filter { !InstructionLinter.matches(re, $0) }
         guard !survivors.isEmpty else { return "" }
-        return String(bullet) + survivors.joined(separator: ". ") + "."
+        return String(bullet) + survivors.joined(separator: " ")
+    }
+
+    static func splitSentences(_ s: String) -> [String] {
+        var out: [String] = []
+        var current = ""
+        let chars = Array(s)
+        for (i, c) in chars.enumerated() {
+            current.append(c)
+            let atEnd = i == chars.count - 1
+            if ".!?".contains(c), atEnd || chars[i + 1].isWhitespace {
+                let trimmed = current.trimmingCharacters(in: .whitespaces)
+                if !trimmed.isEmpty { out.append(trimmed) }
+                current = ""
+            }
+        }
+        let rest = current.trimmingCharacters(in: .whitespaces)
+        if !rest.isEmpty { out.append(rest) }
+        return out
     }
 
     static func wordCount(_ s: String) -> Int {
